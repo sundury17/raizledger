@@ -9,7 +9,9 @@ import {
   SystemProgram,
 } from "@solana/web3.js";
 import { assert, expect } from "chai";
-import type { Raizledger } from "../target/types/raizledger";
+// Tipos versionados usados también por la app; así el typecheck no depende de
+// artefactos generados que no están en el repositorio.
+import type { Raizledger } from "../app/src/types/raizledger";
 
 // Se lee con fs para no depender del comportamiento de Node con JSON ESM.
 const idl = JSON.parse(

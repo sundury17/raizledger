@@ -472,16 +472,16 @@ export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
 
 # 2) Backend y pruebas
 cd raizledger
-npm install --legacy-peer-deps
-anchor build            # genera target/types usado por el typecheck raíz
-npm run typecheck
+npm install
+anchor build
+npm run typecheck        # funciona incluso en un clon limpio; no requiere target/types
 anchor test --skip-build
 cargo build-sbf --arch v0 --tools-version v1.57
 npm run test:interval
 
 # 3) Frontend
 cd app
-npm install --legacy-peer-deps
+npm install
 npm run build
 npm run dev
 
