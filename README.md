@@ -377,3 +377,9 @@ npm run dev
 
 RaízLedger cumple así los requisitos de un dApp Solana funcional, seguro y
 mínimo, con una mejora funcional verificable directamente en el programa.
+
+---
+
+## 10. Licencia
+
+Distribuido bajo licencia **MIT**. Ver [LICENSE](LICENSE).
