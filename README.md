@@ -8,10 +8,98 @@ de su riego y cerrar cuentas cuando ya no se necesitan. No incluye tokens, NFTs,
 pagos, marketplaces ni funcionalidades ajenas al objetivo: **gestionar el
 cuidado de plantas en Solana**.
 
-Estado actual: **compilado, probado en localnet y desplegado en Devnet**. El
-Program ID es real, fue derivado de una keypair generada localmente y su cuenta
-ejecutable fue verificada on-chain. El despliegue se realizó el 21 de noviembre
-de 2026; no se han documentado transacciones de la dApp aparte del propio despliegue.
+Estado actual: **compilado, probado en localnet, desplegado en Devnet y con un
+flujo completo de la dApp ejecutado y verificado on-chain**. El Program ID es
+real, fue derivado de una keypair generada localmente y su cuenta ejecutable
+fue verificada on-chain el 21 de noviembre de 2026.
+
+---
+
+## Entrega y acceso para revisión
+
+**Repositorio público:** https://github.com/sundury17/raizledger
+
+No se necesita invitación ni autorización para abrirlo. Verificado el 21 de
+noviembre de 2026 con un clon anónimo:
+
+```bash
+git clone https://github.com/sundury17/raizledger.git
+curl -I https://raw.githubusercontent.com/sundury17/raizledger/main/README.md
+```
+
+El clon terminó correctamente y la petición al README devolvió `HTTP/2 200`.
+No hay keypairs, `.env` ni secretos versionados; `.gitignore` los excluye y
+`git ls-files` confirma que no están en el historial entregado.
+
+### Ruta elegida
+
+**Proyecto propio.** RaízLedger no es el punto de venta guiado: cambia el caso
+de uso a registro botánico y mantiene competencias equivalentes con decisiones
+y código propios. La base fue un workspace Anchor vacío creado para este
+proyecto; no se copió la versión resuelta del bootcamp.
+
+| Requisito de la ruta propia | Implementación en RaízLedger | Dónde comprobarlo |
+| --- | --- | --- |
+| Cuentas relacionadas y PDAs | `GardenAccount` y `PlantAccount`, con semillas `["garden", authority, garden_id]` y `["plant", garden, plant_id]` | §3 y `programs/raizledger/src/lib.rs` |
+| Cliente coherente con su IDL | IDL real generado por Anchor; el cliente deriva PDAs y construye todas las instrucciones desde él | `app/src/idl/raizledger.json`, `app/src/lib/raizledger.ts` |
+| Frontend con wallet | React + Vite + Phantom/Solflare, conectado a Devnet | §6 y `app/src/pages/Dashboard.tsx` |
+| Creación | `initialize_garden` y `create_plant` | Firmas de evidencia y prueba localnet 1–2 |
+| Lectura | `fetchGarden`, `fetchPlant` y `fetchAllPlants` | Salida `Lectura:` del script de evidencia y prueba 3 |
+| Modificación | `update_plant` y `water_plant` | Firmas de evidencia y pruebas 4–5 |
+| Permisos | `authority`, pertenencia al jardín y validación de semillas | §3 y pruebas 6, 7, 9, 11 |
+| Baja condicionada por una regla | `close_plant` solo funciona si la planta está archivada; el rent vuelve a la authority | Pruebas 9–10 y firma `close_plant` |
+| Aporte propio | Regla de riego con `Clock::get()` en Rust y error `WateringTooSoon` | §4, prueba Rust y rechazo en Devnet |
+
+### Código de la versión entregada
+
+| Elemento | Archivo versionado |
+| --- | --- |
+| Programa Anchor | `programs/raizledger/src/lib.rs` |
+| Pruebas del programa | `tests/raizledger.ts` y `programs/raizledger/tests/intervalo.rs` |
+| IDL generado | `target/idl/raizledger.json` |
+| Copia del IDL usada por la app | `app/src/idl/raizledger.json` |
+| Tipos TS generados | `app/src/types/raizledger.ts` |
+| Cliente TypeScript | `app/src/lib/raizledger.ts` |
+| Frontend | `app/src/` (hook, componentes, página y estilos) |
+| Generador de evidencia Devnet | `scripts/evidencia-devnet.ts` |
+
+`target/idl/raizledger.json` y `app/src/idl/raizledger.json` son byte-idénticos;
+lo mismo ocurre con los tipos TS. Ambos declaran el Program ID
+`CDCv1frTdbCEvQR99XXccVkjMKqdDRgaQLPmVpimSjkp` y las seis instrucciones
+entregadas.
+
+### Pruebas y evidencias en Devnet
+
+Además de las 12 pruebas automatizadas locales, se ejecutó un flujo real contra
+Devnet con:
+
+```bash
+PAYER=/ruta/a/keypair.json npm run evidence:devnet
+```
+
+El script no guarda secretos: recibe la ruta del keypair por entorno, crea un
+jardín, crea una planta, la lee, comprueba dos rechazos, la modifica, la archiva
+y la cierra. Resultado real (authority
+`6fRLSV6KHRRGjsj1ezpv8mzuV4EsuGKTRvt9roVNc4PA`, jardín
+`4bQEc2AsuRndRkHH2R8va1aYBrvwvRijsnUQttvjnBF8`):
+
+| Operación | Firma verificable |
+| --- | --- |
+| `initialize_garden` | [`w1AcZydT...RYAFgV`](https://explorer.solana.com/tx/w1AcZydTq1TX76VURgEsHZCZim1YxvbL2qqQDUboAatQmuinnBRZNZg1PFgGi3TtNud6abSzKhbdDmfygRYAFgV?cluster=devnet) |
+| `create_plant` | [`21S24a4D...vezWqZ92`](https://explorer.solana.com/tx/21S24a4DgdWzimVZgx4LVCJjCqrAUyxJvErdy4bbkCA8PYQxMbGiYroYhhy3uDVGLLFqdL5xQyiotzsxvezWqZ92?cluster=devnet) |
+| `update_plant` | [`4zTR6Rsb...EDeukD`](https://explorer.solana.com/tx/4zTR6RsbHhwoFqEywKju15Aqd6247MvwAG2gyAVV6T7WzpYmvsgz3bMC3qzcL8gbaYrHnax3npgXfADNpQEDeukD?cluster=devnet) |
+| `archive_plant` | [`JB2fGG1A...gDM4gX`](https://explorer.solana.com/tx/JB2fGG1AgVHqAEqG1qSnVreR6LmwcH9YJ5eXcwjXLq7afRu7imTU8RmoqJxjRTUuAxmPBzP8PA6uLZgKamDM4gX?cluster=devnet) |
+| `close_plant` | [`2Vpj9pZ9...AtM7`](https://explorer.solana.com/tx/2Vpj9pZ9mZAB4DBoPfhHvYbUEV4akaeCwboa2Akadm32sKbQppGoWgGwBuwE5shMwucJxLKpbthsDfGge1LRAtM7?cluster=devnet) |
+
+Salida relevante del script:
+
+```text
+Lectura: id=0 nombre=Evidencia especie=Prueba intervalo=1 estado={"active":{}}
+Rechazo esperado (riego antes del intervalo): WateringTooSoon
+Rechazo esperado (cierre de planta activa): PlantNotArchived
+```
+
+El despliegue del programa también tiene firma propia, documentada en §7.
 
 ---
 
@@ -54,6 +142,7 @@ raizledger/
 │   └── src/styles.css
 ├── target/idl/                 # IDL generado (fuente de la copia de la app)
 ├── target/types/               # Tipos generados
+├── scripts/evidencia-devnet.ts # Generador de firmas verificables en Devnet
 └── README.md
 ```
 
@@ -383,6 +472,10 @@ cd app
 npm install
 npm run build
 npm run dev
+
+# 4) Evidencia real en Devnet (opcional; gasta fees de Devnet)
+cd ..
+PAYER=/ruta/a/keypair.json npm run evidence:devnet
 ```
 
 ---
@@ -392,15 +485,18 @@ npm run dev
 | Elemento | Estado |
 | --- | --- |
 | Programa Anchor | Implementado y compilado localmente |
-| IDL y tipos TS | Generados por Anchor y copiados a la app |
+| IDL y tipos TS | Generados por Anchor; copia de la app byte-idéntica al IDL entregado |
 | 11 pruebas localnet | Ejecutadas y pasando |
 | Prueba de intervalo con Clock | Ejecutada y pasando |
 | Frontend | Compila; acciones conectadas al cliente real |
-| Despliegue Devnet | **Desplegado y verificado on-chain** (firma documentada arriba) |
-| Transacciones Devnet | Despliegue e IDL confirmados; acciones de la dApp se firman en la UI |
+| Repositorio para revisión | Público, sin secretos y verificado con clon anónimo |
+| Despliegue Devnet | **Desplegado y verificado on-chain** (firma documentada en §7) |
+| Flujo Devnet de la dApp | **5 firmas verificables**: crear, leer, modificar, archivar y cerrar |
+| Rechazos Devnet | `WateringTooSoon` y `PlantNotArchived` observados en el script |
 
 RaízLedger cumple así los requisitos de un dApp Solana funcional, seguro y
-mínimo, con una mejora funcional verificable directamente en el programa.
+mínimo, con una mejora funcional verificable directamente en el programa y con
+evidencia pública tanto local como on-chain.
 
 ---
 

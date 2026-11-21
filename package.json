@@ -8,7 +8,8 @@
     "test:interval": "BPF_OUT_DIR=$(pwd)/target/deploy cargo test -p raizledger --test intervalo -- --nocapture",
     "test:local": "anchor test",
     "build": "anchor build",
-    "deploy:devnet": "anchor deploy --provider.cluster devnet"
+    "deploy:devnet": "anchor deploy --provider.cluster devnet",
+    "evidence:devnet": "ts-node --transpile-only scripts/evidencia-devnet.ts"
   },
   "devDependencies": {
     "@coral-xyz/anchor": "0.32.0",
