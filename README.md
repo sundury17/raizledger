@@ -313,7 +313,20 @@ cambia `DEVNET_RPC` en `app/src/main.tsx`.
 **A día de hoy NO se ha desplegado.** No hay firmas de despliegue ni de
 transacciones que reportar, y este README no inventa ninguna.
 
-Para desplegar se necesita autorización explícita y SOL en Devnet:
+La autorización para desplegar fue concedida explícitamente, pero el despliegue
+no se pudo ejecutar porque no fue posible financiar la wallet de deploy:
+
+- `faucet.solana.com`: rechazo por **GitHub account is too new**.
+- `solana airdrop` por CLI: **rate limit** en el endpoint público.
+- Jumpbit: entregó solo **0.1 SOL** (el programa necesita **1.22761248 SOL**
+  de rent para 241528 bytes).
+- `devnet-pow`: el único faucet PoW activo tiene menos de 1 SOL y reparte
+  `0.0000001 SOL` por minado, insuficiente.
+
+Wallet de deploy: `6fRLSV6KHRRGjsj1ezpv8mzuV4EsuGKTRvt9roVNc4PA`.
+
+No se gastó SOL ni se envió ninguna transacción. Cuando la wallet reciba al
+menos ~1.3 SOL Devnet, basta con:
 
 ```bash
 source ~/.cargo/env
@@ -372,7 +385,7 @@ npm run dev
 | 11 pruebas localnet | Ejecutadas y pasando |
 | Prueba de intervalo con Clock | Ejecutada y pasando |
 | Frontend | Compila; acciones conectadas al cliente real |
-| Despliegue Devnet | **Pendiente de autorización** |
+| Despliegue Devnet | **Autorizado, bloqueado por falta de SOL Devnet** |
 | Transacciones Devnet | **Ninguna ejecutada** |
 
 RaízLedger cumple así los requisitos de un dApp Solana funcional, seguro y
