@@ -1,0 +1,703 @@
+{
+  "address": "CDCv1frTdbCEvQR99XXccVkjMKqdDRgaQLPmVpimSjkp",
+  "metadata": {
+    "name": "raizledger",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "RaízLedger: registro on-chain del cuidado de plantas en Solana"
+  },
+  "instructions": [
+    {
+      "name": "archive_plant",
+      "docs": [
+        "Archiva una planta activa. Las plantas archivadas no pueden volver a",
+        "archivarse ni recibir otras operaciones (salvo cerrarlas)."
+      ],
+      "discriminator": [
+        235,
+        175,
+        226,
+        234,
+        104,
+        38,
+        107,
+        73
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "account",
+                "path": "garden.garden_id",
+                "account": "GardenAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "plant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "garden"
+              },
+              {
+                "kind": "arg",
+                "path": "plant_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "plant_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "close_plant",
+      "docs": [
+        "Cierra una planta **archivada** y devuelve el rent a la autoridad."
+      ],
+      "discriminator": [
+        108,
+        107,
+        159,
+        204,
+        204,
+        132,
+        31,
+        136
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "account",
+                "path": "garden.garden_id",
+                "account": "GardenAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "plant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "garden"
+              },
+              {
+                "kind": "arg",
+                "path": "plant_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "plant_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "create_plant",
+      "docs": [
+        "Registra una planta nueva dentro del jardín. `plant_id` debe ser",
+        "exactamente el contador actual del jardín para mantener la secuencia."
+      ],
+      "discriminator": [
+        54,
+        36,
+        254,
+        203,
+        1,
+        141,
+        112,
+        190
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "account",
+                "path": "garden.garden_id",
+                "account": "GardenAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "plant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "garden"
+              },
+              {
+                "kind": "arg",
+                "path": "plant_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "plant_id",
+          "type": "u64"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "species",
+          "type": "string"
+        },
+        {
+          "name": "watering_interval",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "initialize_garden",
+      "docs": [
+        "Crea el jardín de la wallet. La PDA impide inicializaciones duplicadas",
+        "para la misma (authority, garden_id)."
+      ],
+      "discriminator": [
+        23,
+        148,
+        216,
+        67,
+        46,
+        4,
+        251,
+        207
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "arg",
+                "path": "garden_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "garden_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_plant",
+      "docs": [
+        "Modifica los datos editables de una planta activa."
+      ],
+      "discriminator": [
+        25,
+        219,
+        193,
+        236,
+        125,
+        82,
+        216,
+        158
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "account",
+                "path": "garden.garden_id",
+                "account": "GardenAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "plant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "garden"
+              },
+              {
+                "kind": "arg",
+                "path": "plant_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "plant_id",
+          "type": "u64"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "species",
+          "type": "string"
+        },
+        {
+          "name": "watering_interval",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "water_plant",
+      "docs": [
+        "Registra un riego. Aporte funcional: solo se permite si ya transcurrió",
+        "el intervalo mínimo configurado desde el último riego."
+      ],
+      "discriminator": [
+        18,
+        60,
+        106,
+        105,
+        240,
+        199,
+        162,
+        11
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "account",
+                "path": "garden.garden_id",
+                "account": "GardenAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "plant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "garden"
+              },
+              {
+                "kind": "arg",
+                "path": "plant_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "plant_id",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "GardenAccount",
+      "discriminator": [
+        2,
+        120,
+        180,
+        178,
+        149,
+        145,
+        126,
+        226
+      ]
+    },
+    {
+      "name": "PlantAccount",
+      "discriminator": [
+        68,
+        220,
+        32,
+        100,
+        167,
+        46,
+        85,
+        41
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "La wallet firmante no es la propietaria de este recurso."
+    },
+    {
+      "code": 6001,
+      "name": "InvalidGarden",
+      "msg": "La planta no pertenece al jardín indicado."
+    },
+    {
+      "code": 6002,
+      "name": "InvalidPlantId",
+      "msg": "El identificador de planta no coincide con la PDA."
+    },
+    {
+      "code": 6003,
+      "name": "EmptyName",
+      "msg": "El nombre no puede estar vacío."
+    },
+    {
+      "code": 6004,
+      "name": "EmptySpecies",
+      "msg": "La especie no puede estar vacía."
+    },
+    {
+      "code": 6005,
+      "name": "NameTooLong",
+      "msg": "El nombre excede la longitud máxima permitida."
+    },
+    {
+      "code": 6006,
+      "name": "SpeciesTooLong",
+      "msg": "La especie excede la longitud máxima permitida."
+    },
+    {
+      "code": 6007,
+      "name": "InvalidWateringInterval",
+      "msg": "El intervalo de riego debe estar entre 1 y 255 días."
+    },
+    {
+      "code": 6008,
+      "name": "PlantArchived",
+      "msg": "La planta ya está archivada; no admite esta operación."
+    },
+    {
+      "code": 6009,
+      "name": "PlantNotArchived",
+      "msg": "La planta debe estar archivada antes de poder cerrarla."
+    },
+    {
+      "code": 6010,
+      "name": "WateringTooSoon",
+      "msg": "Aún no corresponde regar: no ha transcurrido el intervalo mínimo."
+    },
+    {
+      "code": 6011,
+      "name": "InvalidTimestamp",
+      "msg": "Marca de tiempo inválida."
+    },
+    {
+      "code": 6012,
+      "name": "ArithmeticOverflow",
+      "msg": "Desbordamiento aritmético."
+    }
+  ],
+  "types": [
+    {
+      "name": "GardenAccount",
+      "docs": [
+        "Jardín de una wallet. PDA: [\"garden\", authority, garden_id]."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "garden_id",
+            "type": "u64"
+          },
+          {
+            "name": "plant_count",
+            "type": "u32"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlantAccount",
+      "docs": [
+        "Planta perteneciente a un jardín. PDA: [\"plant\", garden, plant_id]."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "garden",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "plant_id",
+            "type": "u64"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "species",
+            "type": "string"
+          },
+          {
+            "name": "watering_interval",
+            "type": "u8"
+          },
+          {
+            "name": "last_watered",
+            "type": "i64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "PlantStatus"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlantStatus",
+      "docs": [
+        "Estado de una planta. Se serializa como 1 byte."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Archived"
+          }
+        ]
+      }
+    }
+  ]
+}

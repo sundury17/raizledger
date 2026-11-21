@@ -1,0 +1,24 @@
+# Compilación / artefactos
+/target/*
+!/target/idl/
+/target/idl/*
+!/target/idl/raizledger.json
+/target/types/
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+
+# Claves y secretos (NUNCA versionar)
+**/*-keypair.json
+**/id.json
+*.pem
+.env
+.env.*
+
+# Validador local
+test-ledger/
+*.log
+
+# Sistema
+.DS_Store

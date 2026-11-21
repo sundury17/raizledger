@@ -1,0 +1,24 @@
+[features]
+seeds = false
+skip-lint = false
+
+# Fijamos la toolchain para que AVM use platform-tools con Rust >= 1.85.
+# Esto evita crates que requieren edition2024 con cargas antiguas.
+[toolchain]
+solana_version = "4.4.1"
+
+[programs.localnet]
+raizledger = "CDCv1frTdbCEvQR99XXccVkjMKqdDRgaQLPmVpimSjkp"
+
+[programs.devnet]
+raizledger = "CDCv1frTdbCEvQR99XXccVkjMKqdDRgaQLPmVpimSjkp"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "npx mocha --require ts-node/register/transpile-only --timeout 240000 tests/*.ts"
