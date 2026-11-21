@@ -31,6 +31,17 @@ El clon terminó correctamente y la petición al README devolvió `HTTP/2 200`.
 No hay keypairs, `.env` ni secretos versionados; `.gitignore` los excluye y
 `git ls-files` confirma que no están en el historial entregado.
 
+### Identificación
+
+| Dato | Valor |
+| --- | --- |
+| Nombre para el certificado | **Sundury Conde Vera** |
+| Correo utilizado en el registro de WayLearn | `sundury_conde@upatlautla.edu.mx` |
+| Correo personal de contacto | `condeverasundury@gmail.com` |
+
+Los resultados, correcciones y el certificado deben enviarse al correo
+registrado en WayLearn: `sundury_conde@upatlautla.edu.mx`.
+
 ### Ruta elegida
 
 **Proyecto propio.** RaízLedger no es el punto de venta guiado: cambia el caso
