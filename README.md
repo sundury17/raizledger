@@ -8,9 +8,10 @@ de su riego y cerrar cuentas cuando ya no se necesitan. No incluye tokens, NFTs,
 pagos, marketplaces ni funcionalidades ajenas al objetivo: **gestionar el
 cuidado de plantas en Solana**.
 
-Estado actual: **localnet probado; Devnet no desplegado**. El Program ID es real
-y fue derivado de una keypair generada localmente, pero todavía no se envió
-ninguna transacción de despliegue ni se gastó SOL en Devnet.
+Estado actual: **compilado, probado en localnet y desplegado en Devnet**. El
+Program ID es real, fue derivado de una keypair generada localmente y su cuenta
+ejecutable fue verificada on-chain. El despliegue se realizó el 21 de noviembre
+de 2026; no se han documentado transacciones de la dApp aparte del propio despliegue.
 
 ---
 
@@ -310,45 +311,55 @@ cambia `DEVNET_RPC` en `app/src/main.tsx`.
 
 ## 7. Despliegue en Devnet
 
-**A día de hoy NO se ha desplegado.** No hay firmas de despliegue ni de
-transacciones que reportar, y este README no inventa ninguna.
-
-La autorización para desplegar fue concedida explícitamente, pero el despliegue
-no se pudo ejecutar porque no fue posible financiar la wallet de deploy:
-
-- `faucet.solana.com`: rechazo por **GitHub account is too new**.
-- `solana airdrop` por CLI: **rate limit** en el endpoint público.
-- Jumpbit: entregó solo **0.1 SOL** (el programa necesita **1.22761248 SOL**
-  de rent para 241528 bytes).
-- `devnet-pow`: el único faucet PoW activo tiene menos de 1 SOL y reparte
-  `0.0000001 SOL` por minado, insuficiente.
-
-Wallet de deploy: `6fRLSV6KHRRGjsj1ezpv8mzuV4EsuGKTRvt9roVNc4PA`.
-
-No se gastó SOL ni se envió ninguna transacción. Cuando la wallet reciba al
-menos ~1.3 SOL Devnet, basta con:
+El programa fue desplegado correctamente en Devnet el **21 de noviembre de
+2026** con:
 
 ```bash
 source ~/.cargo/env
 export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
 cd raizledger
-
-solana config set --url devnet
-solana-keygen pubkey target/deploy/raizledger-keypair.json   # CDCv1fr...
-solana balance                                              # debe tener SOL
-
-anchor build
 anchor deploy --provider.cluster devnet
 ```
 
-Tras un despliegue real, verificar con:
+Datos reales del despliegue:
+
+| Dato | Valor |
+| --- | --- |
+| Program ID | `CDCv1frTdbCEvQR99XXccVkjMKqdDRgaQLPmVpimSjkp` |
+| Firma del despliegue | `4sg5DdYa34W2PYcqKUtYQkpjogLexw6vxJzV8iGs95ymwfCTBWFwhGq7QYXs72GiY7FQaVFMhdycGSEZfXEsa9Ny` |
+| ProgramData | `p8Uf9C6vFABM1Ud7TDNXPBatHUduxrhKeCEReqhW5bK` |
+| Upgrade authority | `6fRLSV6KHRRGjsj1ezpv8mzuV4EsuGKTRvt9roVNc4PA` |
+| Cuenta IDL | `7exkMzG6GFyxMSZivrkp5s55nnr3ZLq2PhdmxXPH8QSD` |
+| Slot del último despliegue | `524803374` |
+| Dueño de la cuenta del programa | `BPFLoaderUpgradeab1e11111111111111111111111` |
+| Longitud del programa | `241528 bytes` |
+| Rent del programa | `1.22784108 SOL` |
+| Cluster | Devnet (`https://api.devnet.solana.com`) |
+
+Verificación local repetible:
+
+```bash
+solana program show CDCv1frTdbCEvQR99XXccVkjMKqdDRgaQLPmVpimSjkp --url devnet
+solana account 7exkMzG6GFyxMSZivrkp5s55nnr3ZLq2PhdmxXPH8QSD --url devnet
+```
+
+Enlace del programa:
 
 ```text
 https://explorer.solana.com/address/CDCv1frTdbCEvQR99XXccVkjMKqdDRgaQLPmVpimSjkp?cluster=devnet
 ```
 
-Solo entonces se podrían documentar la firma de despliegue y las firmas de las
-primeras transacciones de la dApp.
+Enlace de la firma del despliegue:
+
+```text
+https://explorer.solana.com/tx/4sg5DdYa34W2PYcqKUtYQkpjogLexw6vxJzV8iGs95ymwfCTBWFwhGq7QYXs72GiY7FQaVFMhdycGSEZfXEsa9Ny?cluster=devnet
+```
+
+Nota: varios faucets rechazaron o limitaron el funding inicial; la wallet de
+deploy fue financiada finalmente desde otra cuenta. El repositorio, el Program
+ID y la autoridad de upgrade no cambiaron. Las firmas de las acciones de la
+dApp se generan en tiempo real en el navegador y se muestran en la interfaz; no
+se inventan ni se copian entre ejecuciones.
 
 ---
 
@@ -385,8 +396,8 @@ npm run dev
 | 11 pruebas localnet | Ejecutadas y pasando |
 | Prueba de intervalo con Clock | Ejecutada y pasando |
 | Frontend | Compila; acciones conectadas al cliente real |
-| Despliegue Devnet | **Autorizado, bloqueado por falta de SOL Devnet** |
-| Transacciones Devnet | **Ninguna ejecutada** |
+| Despliegue Devnet | **Desplegado y verificado on-chain** (firma documentada arriba) |
+| Transacciones Devnet | Despliegue e IDL confirmados; acciones de la dApp se firman en la UI |
 
 RaízLedger cumple así los requisitos de un dApp Solana funcional, seguro y
 mínimo, con una mejora funcional verificable directamente en el programa.
