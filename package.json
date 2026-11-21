@@ -5,6 +5,7 @@
   "description": "Pruebas Anchor y cliente de RaízLedger",
   "scripts": {
     "test": "mocha --require ts-node/register/transpile-only --timeout 240000 tests/*.ts",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p app/tsconfig.json",
     "test:interval": "BPF_OUT_DIR=$(pwd)/target/deploy cargo test -p raizledger --test intervalo -- --nocapture",
     "test:local": "anchor test",
     "build": "anchor build",

@@ -25,16 +25,24 @@ function u64Le(value: number): Buffer {
   buf.writeBigUInt64LE(BigInt(value));
   return buf;
 }
-function deriveGardenPda(authority: PublicKey, gardenId: number): [PublicKey] {
+function deriveGardenPda(
+  authority: PublicKey,
+  gardenId: number,
+  programId: PublicKey = PROGRAM_ID
+): [PublicKey] {
   return [PublicKey.findProgramAddressSync(
     [Buffer.from("garden"), authority.toBuffer(), u64Le(gardenId)],
-    PROGRAM_ID
+    programId
   )[0]];
 }
-function derivePlantPda(garden: PublicKey, plantId: number): [PublicKey] {
+function derivePlantPda(
+  garden: PublicKey,
+  plantId: number,
+  programId: PublicKey = PROGRAM_ID
+): [PublicKey] {
   return [PublicKey.findProgramAddressSync(
     [Buffer.from("plant"), garden.toBuffer(), u64Le(plantId)],
-    PROGRAM_ID
+    programId
   )[0]];
 }
 async function fetchGarden(program: Program<Raizledger>, authority: PublicKey, gardenId: number) {
